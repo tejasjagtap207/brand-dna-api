@@ -1,15 +1,8 @@
 {
   "version": 2,
   "functions": {
-    "api/*.js": {
-      "memory": 1024,
+    "api/analyze.js": {
       "maxDuration": 60
     }
-  },
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/api/$1"
-    }
-  ]
+  }
 }
