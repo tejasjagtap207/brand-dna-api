@@ -1,9 +1,8 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const { createClient } = require("@supabase/supabase-js");
 const axios = require("axios");
-const cheerio = require("cheerio");
 
-// Initialize APIs using Vercel Environment Variables
+// Initialize APIs
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const supabase = createClient(
   process.env.SUPABASE_URL,
@@ -11,7 +10,7 @@ const supabase = createClient(
 );
 
 module.exports = async (req, res) => {
-  // Allow CORS (so agencies can call this from their own websites)
+  // CORS
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -19,14 +18,14 @@ module.exports = async (req, res) => {
   if (req.method === "OPTIONS") return res.status(200).end();
   if (req.method !== "POST") return res.status(405).json({ error: "Use POST request" });
 
-  const { url, api_key, email } = req.body;
+  const { url, api_key } = req.body;
 
   if (!url || !api_key) {
     return res.status(400).json({ error: "Missing 'url' or 'api_key' in request body." });
   }
 
   try {
-    // 1. Check Token Balance in Supabase
+    // 1. Check Token Balance
     const { data: user, error: dbError } = await supabase
       .from("users")
       .select("tokens_remaining")
@@ -34,33 +33,33 @@ module.exports = async (req, res) => {
       .single();
 
     if (dbError || !user) {
-      return res.status(401).json({ error: "Invalid API Key. Visit our site to get a key." });
+      return res.status(401).json({ error: "Invalid API Key." });
     }
 
     if (user.tokens_remaining <= 0) {
-      return res.status(403).json({ error: "Trial limit reached. Upgrade to premium for unlimited access." });
+      return res.status(403).json({ error: "Trial limit reached. Upgrade to premium." });
     }
 
-  // 2. Scrape the Website URL for Text
-    // 2. Fetch clean text from website using Jina AI Reader (Bypasses all blocks)
-const jinaUrl = "https://r.jina.ai/" + url;
-const response = await axios.get(jinaUrl, { timeout: 30000 });
-const websiteText = response.data.replace(/\s+/g, " ").trim().substring(0, 15000);
-      
-    const $ = cheerio.load(response.data);
+    // 2. Fetch clean text using Jina AI Reader
+    const jinaUrl = "https://r.jina.ai/" + url;
+    const jinaResponse = await axios.get(jinaUrl, { 
+      timeout: 20000,
+      headers: { 'Accept': 'text/plain' }
+    });
     
-    // Remove scripts and styles so we only get text
-    $("script, style, nav, footer").remove();
-    const websiteText = $("body").text().replace(/\s+/g, " ").trim().substring(0, 15000); // Limit to 15k chars to save tokens
-
-    if (!websiteText) {
-      return res.status(400).json({ error: "Could not extract text from this URL." });
+    let websiteText = jinaResponse.data;
+    
+    if (!websiteText || websiteText.length < 50) {
+      return res.status(400).json({ error: "Could not extract enough text from this URL." });
     }
+    
+    // Truncate to save tokens
+    websiteText = websiteText.replace(/\s+/g, " ").trim().substring(0, 12000);
 
-    // 3. Send to Gemini 1.5 Flash for Brand DNA Analysis
+    // 3. Send to Gemini
     const model = genAI.getGenerativeModel({ 
       model: "gemini-1.5-flash",
-      generationConfig: { responseMimeType: "application/json" } // Forces pure JSON output
+      generationConfig: { responseMimeType: "application/json" }
     });
 
     const prompt = `You are a top-tier marketing strategist. Analyze the following website text and extract the Brand DNA. 
@@ -75,8 +74,8 @@ const websiteText = response.data.replace(/\s+/g, " ").trim().substring(0, 15000
     const result = await model.generateContent(prompt);
     const aiResponse = JSON.parse(result.response.text());
 
-    // 4. Deduct Tokens (Rough estimate: 1 token per character processed)
-    const tokensUsed = Math.ceil(websiteText.length / 4) + 1000; // output tokens
+    // 4. Deduct Tokens
+    const tokensUsed = Math.ceil(websiteText.length / 4) + 1000;
     const newBalance = user.tokens_remaining - tokensUsed;
 
     await supabase
@@ -84,7 +83,7 @@ const websiteText = response.data.replace(/\s+/g, " ").trim().substring(0, 15000
       .update({ tokens_remaining: newBalance })
       .eq("api_key", api_key);
 
-    // 5. Return the Valuable Data to the Agency
+    // 5. Return Data
     return res.status(200).json({
       success: true,
       brand_dna: aiResponse,
@@ -92,12 +91,10 @@ const websiteText = response.data.replace(/\s+/g, " ").trim().substring(0, 15000
     });
 
   } catch (error) {
-    // NOTE: Log the full error so Vercel Runtime Logs show the real cause
-    // (e.g. axios status code, Gemini error, etc.) instead of only a generic message.
     console.error("API Error:", error.message);
-    return res.status(500).json({
-      error: "Failed to analyze website. The site might be blocking scrapers.",
-      details: error.message
+    // Always return JSON so frontend doesn't crash
+    return res.status(500).json({ 
+      error: "Server error processing the request. It might be a timeout or API issue. Please try again." 
     });
   }
 };
