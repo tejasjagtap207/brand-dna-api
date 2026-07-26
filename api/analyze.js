@@ -41,16 +41,15 @@ module.exports = async (req, res) => {
       return res.status(403).json({ error: "Trial limit reached. Upgrade to premium for unlimited access." });
     }
 
-    // 2. Scrape the Website URL for Text
-    // NOTE: Added a browser-like User-Agent header so sites that block plain
-    // bot/script requests (no User-Agent) are less likely to return 403.
-    const response = await axios.get(url, {
-      timeout: 10000,
-      headers: {
-        "User-Agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-      }
-    });
+  // 2. Scrape the Website URL for Text
+const response = await axios.get(url, {
+  timeout: 10000,
+  headers: {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'
+  }
+});
+      
     const $ = cheerio.load(response.data);
     
     // Remove scripts and styles so we only get text
