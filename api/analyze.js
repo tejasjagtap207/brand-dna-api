@@ -42,13 +42,10 @@ module.exports = async (req, res) => {
     }
 
   // 2. Scrape the Website URL for Text
-const response = await axios.get(url, {
-  timeout: 10000,
-  headers: {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'
-  }
-});
+    // 2. Fetch clean text from website using Jina AI Reader (Bypasses all blocks)
+const jinaUrl = "https://r.jina.ai/" + url;
+const response = await axios.get(jinaUrl, { timeout: 30000 });
+const websiteText = response.data.replace(/\s+/g, " ").trim().substring(0, 15000);
       
     const $ = cheerio.load(response.data);
     
