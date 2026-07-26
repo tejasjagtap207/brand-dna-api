@@ -14,69 +14,63 @@
     </style>
 </head>
 <body>
-
 <div class="container">
     <h1>🚀 Free Brand DNA Strategy Tool</h1>
     <p>Enter your prospect's website URL below to instantly extract their Brand Voice, USPs, and Missing Opportunities.</p>
     
     <input type="text" id="websiteUrl" placeholder="https://www.example.com">
     <button onclick="analyzeBrand()">Analyze Brand Strategy</button>
-
     <div id="loading" style="display:none; font-weight:bold; color:blue;">Analyzing website... Please wait 5 seconds.</div>
     <div id="result"></div>
 </div>
-
 <script>
+    // Production Vercel URL (hash wale preview URLs use mat karo, ye hamesha same rehta hai)
+    const API_BASE_URL = 'https://brand-dna-api.vercel.app';
+
     async function analyzeBrand() {
         const url = document.getElementById('websiteUrl').value;
         const resultDiv = document.getElementById('result');
         const loadingDiv = document.getElementById('loading');
         
         if(!url) { alert("Please enter a URL"); return; }
-
         resultDiv.innerHTML = "";
         loadingDiv.style.display = "block";
-
         try {
-            // Yahan aapka Vercel API link lagana hai
-            const API_BASE_URL = 'https://brand-dna-api.vercel.app';
+            const response = await fetch(`${API_BASE_URL}/api/analyze`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                // API key yahan chhupi hui hai client se
                 body: JSON.stringify({ url: url, api_key: 'AGENCY-TRIAL-12345' })
             });
 
             const data = await response.json();
-
             loadingDiv.style.display = "none";
 
-            if (data.error) {
-                resultDiv.innerHTML = `<span style="color:red;">Error: ${data.error}</span>`;
-            } else {
-                // Data ko sundar format mein dikhana
-                const brand = data.brand_dna;
-                resultDiv.innerHTML = `
-                    <h3>Tone of Voice:</h3> <p>${brand.tone_of_voice}</p>
-                    
-                    <h3>Unique Selling Propositions (USPs):</h3>
-                    <ul>${brand.unique_selling_propositions.map(item => `<li>${item}</li>`).join('')}</ul>
-                    
-                    <h3>Audience Pain Points:</h3>
-                    <ul>${brand.audience_pain_points.map(item => `<li>${item}</li>`).join('')}</ul>
-                    
-                    <h3>Missing Content Opportunities:</h3>
-                    <ul>${brand.missing_content_opportunities.map(item => `<li>${item}</li>`).join('')}</ul>
-                    
-                    <hr><p style="text-align:right; color:gray;">Tokens Remaining: ${data.tokens_remaining}</p>
-                `;
+            if (!response.ok || data.error) {
+                resultDiv.innerHTML = `<span style="color:red;">Error: ${data.error || 'Unknown error (status ' + response.status + ')'}</span>`;
+                return;
             }
+
+            const brand = data.brand_dna;
+            resultDiv.innerHTML = `
+                <h3>Tone of Voice:</h3> <p>${brand.tone_of_voice}</p>
+                
+                <h3>Unique Selling Propositions (USPs):</h3>
+                <ul>${brand.unique_selling_propositions.map(item => `<li>${item}</li>`).join('')}</ul>
+                
+                <h3>Audience Pain Points:</h3>
+                <ul>${brand.audience_pain_points.map(item => `<li>${item}</li>`).join('')}</ul>
+                
+                <h3>Missing Content Opportunities:</h3>
+                <ul>${brand.missing_content_opportunities.map(item => `<li>${item}</li>`).join('')}</ul>
+                
+                <hr><p style="text-align:right; color:gray;">Tokens Remaining: ${data.tokens_remaining}</p>
+            `;
         } catch (error) {
             loadingDiv.style.display = "none";
-            resultDiv.innerHTML = `<span style="color:red;">Failed to connect to API. Check your Vercel link.</span>`;
-            console.error(error);
+            resultDiv.innerHTML = `<span style="color:red;">Failed to connect to API. Check your Vercel link.<br>Details: ${error.message}</span>`;
+            console.error("Fetch error:", error);
         }
     }
 </script>
-
 </body>
 </html>
