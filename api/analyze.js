@@ -42,7 +42,15 @@ module.exports = async (req, res) => {
     }
 
     // 2. Scrape the Website URL for Text
-    const response = await axios.get(url, { timeout: 10000 });
+    // NOTE: Added a browser-like User-Agent header so sites that block plain
+    // bot/script requests (no User-Agent) are less likely to return 403.
+    const response = await axios.get(url, {
+      timeout: 10000,
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+      }
+    });
     const $ = cheerio.load(response.data);
     
     // Remove scripts and styles so we only get text
@@ -88,7 +96,12 @@ module.exports = async (req, res) => {
     });
 
   } catch (error) {
+    // NOTE: Log the full error so Vercel Runtime Logs show the real cause
+    // (e.g. axios status code, Gemini error, etc.) instead of only a generic message.
     console.error("API Error:", error.message);
-    return res.status(500).json({ error: "Failed to analyze website. The site might be blocking scrapers." });
+    return res.status(500).json({
+      error: "Failed to analyze website. The site might be blocking scrapers.",
+      details: error.message
+    });
   }
 };
