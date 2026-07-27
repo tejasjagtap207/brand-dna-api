@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Brand DNA Strategy Tool — API by Tejas Jagtap</title>
+<title>Elite B2B Growth Audit — API by Tejas Jagtap</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -155,19 +155,35 @@
   }
   .card p{ margin:0; line-height:1.65; font-size:0.93rem; color:var(--ink); }
   .card ul{ margin:0; padding-left:18px; line-height:1.75; font-size:0.93rem; color:var(--ink); }
+  
   .card.summary{ border-left-color:var(--brand); }
   .card.tone{ border-left-color:var(--brand); }
   .card.tone .tag{ background:var(--brand-tint); color:var(--brand); }
+  
   .card.usp{ border-left-color:var(--teal); }
   .card.usp .tag{ background:var(--teal-tint); color:var(--teal); }
+  
   .card.pain{ border-left-color:var(--rose); }
   .card.pain .tag{ background:var(--rose-tint); color:var(--rose); }
+  
   .card.competitors{ border-left-color:var(--amber); }
   .card.competitors .tag{ background:var(--amber-tint); color:var(--amber); }
+  
   .card.content{ border-left-color:var(--green); }
   .card.content .tag{ background:var(--green-tint); color:var(--green); }
+  
   .card.technical{ border-left-color:var(--slate); }
   .card.technical .tag{ background:var(--slate-tint); color:var(--slate); }
+
+  /* New Cards Styles */
+  .card.tech{ border-left-color:var(--slate); }
+  .card.tech .tag{ background:var(--slate-tint); color:var(--slate); }
+  
+  .card.reviews{ border-left-color:var(--amber); }
+  .card.reviews .tag{ background:var(--amber-tint); color:var(--amber); }
+  
+  .card.trends{ border-left-color:var(--teal); }
+  .card.trends .tag{ background:var(--teal-tint); color:var(--teal); }
 
   .competitor-row{ padding:12px 0; border-top:1px solid var(--line); }
   .competitor-row:first-of-type{ border-top:none; padding-top:0; }
@@ -273,17 +289,17 @@
 <main class="wrap">
 
   <section class="hero">
-    <div class="eyebrow">Live brand &amp; competitor analysis</div>
-    <h1>One URL in. A full brand strategy brief out.</h1>
-    <p class="lead">Paste any prospect's website. The API scrapes their live content, pulls real Google PageSpeed data, and runs it through AI to return tone of voice, USPs, pain points, competitor benchmarking, content gaps, and a technical audit — as structured JSON.</p>
+    <div class="eyebrow">Elite B2B Growth & Competitor Audit</div>
+    <h1>One URL in. A full brand & tech strategy out.</h1>
+    <p class="lead">Paste any prospect's website. The API scrapes live content, detects ad trackers, pulls Trustpilot reviews & PageSpeed data, and runs it through AI to return a full strategy brief — as structured JSON.</p>
 
     <div class="tool-card">
       <div class="input-row">
         <input type="text" id="websiteUrl" placeholder="https://www.example.com" autocomplete="off" spellcheck="false">
-        <button class="analyze-btn" id="analyzeBtn" onclick="analyzeBrand()">Analyze Brand Strategy</button>
+        <button class="analyze-btn" id="analyzeBtn" onclick="analyzeBrand()">Run Elite Audit</button>
       </div>
       <div class="token-line" id="tokenLine"><span>●</span> <span class="token-count" id="tokenCount">—</span> tokens remaining on this key</div>
-      <div class="loading" id="loading"><div class="spinner"></div><span id="loadingText">Scraping site, pulling speed data, running analysis…</span></div>
+      <div class="loading" id="loading"><div class="spinner"></div><span id="loadingText">Scraping site, pulling speed/reviews, running AI analysis…</span></div>
       <div class="error-box" id="errorBox">
         <div class="title">Analysis failed</div>
         <div id="errorMsg">Something went wrong.</div>
@@ -297,26 +313,29 @@
   <section class="block" id="how">
     <div class="section-tag">Process</div>
     <h2 class="section-head">How it works</h2>
-    <p class="section-sub">Four steps happen inside a single API call — no manual research, no separate tools to stitch together.</p>
+    <p class="section-sub">A single API call handles scraping, tech detection, review fetching, and AI analysis — no manual research required.</p>
     <div class="steps">
-      <div class="step"><span class="step-num">01</span><h4>Fetch the page</h4><p>The live website is read and cleaned into plain text — scripts, nav, and footer stripped out.</p></div>
-      <div class="step"><span class="step-num">02</span><h4>Pull real speed data</h4><p>Google PageSpeed Insights returns actual mobile performance and SEO scores — not estimates.</p></div>
-      <div class="step"><span class="step-num">03</span><h4>Run the analysis</h4><p>An AI model reads the content and speed data together to build the strategic brief.</p></div>
-      <div class="step"><span class="step-num">04</span><h4>Return structured JSON</h4><p>One response, seven fields, ready to render in a report, a CRM, or a client dashboard.</p></div>
+      <div class="step"><span class="step-num">01</span><h4>Fetch & Detect</h4><p>Reads live site text and scans HTML for Meta Pixel, Google Ads, Hubspot, and other trackers.</p></div>
+      <div class="step"><span class="step-num">02</span><h4>Pull Real Data</h4><p>Fetches Google PageSpeed scores and live Trustpilot reviews to ground the analysis in reality.</p></div>
+      <div class="step"><span class="step-num">03</span><h4>Check History</h4><p>Pulls past reports from the database to compare against the new data for trend analysis.</p></div>
+      <div class="step"><span class="step-num">04</span><h4>Return JSON</h4><p>AI structures everything into a clean 10-field response ready for your dashboard or CRM.</p></div>
     </div>
   </section>
 
   <section class="block" id="inside">
     <div class="section-tag">Output</div>
     <h2 class="section-head">What's inside every report</h2>
-    <p class="section-sub">Each report returns the same seven fields, every time — predictable enough to build a template around.</p>
+    <p class="section-sub">Each report returns core strategy fields plus exclusive tech, review, and trend data you can't get from basic AI.</p>
     <div class="chip-grid">
       <div class="chip-card"><span class="tag" style="background:var(--brand-tint);color:var(--brand)">EXECUTIVE SUMMARY</span><p>One paragraph on how the brand currently positions itself.</p></div>
       <div class="chip-card"><span class="tag" style="background:var(--brand-tint);color:var(--brand)">TONE OF VOICE</span><p>How the brand actually sounds, described in plain language.</p></div>
       <div class="chip-card"><span class="tag" style="background:var(--teal-tint);color:var(--teal)">USPs</span><p>Three things the brand does better than its category.</p></div>
       <div class="chip-card"><span class="tag" style="background:var(--rose-tint);color:var(--rose)">PAIN POINTS</span><p>Three problems their audience is likely facing.</p></div>
-      <div class="chip-card"><span class="tag" style="background:var(--amber-tint);color:var(--amber)">COMPETITOR BENCHMARKING</span><p>Named competitors, their edge, and how to counter it.</p></div>
+      <div class="chip-card"><span class="tag" style="background:var(--amber-tint);color:var(--amber)">COMPETITORS</span><p>Named competitors, their edge, and how to counter it.</p></div>
       <div class="chip-card"><span class="tag" style="background:var(--green-tint);color:var(--green)">CONTENT GAPS</span><p>SEO and content opportunities the brand is missing.</p></div>
+      <div class="chip-card"><span class="tag" style="background:var(--slate-tint);color:var(--slate)">TECH STACK & ADS</span><p>Detects real tracking scripts like Google Analytics, Meta Pixel, and CRMs.</p></div>
+      <div class="chip-card"><span class="tag" style="background:var(--amber-tint);color:var(--amber)">REVIEW ANALYSIS</span><p>Pulls live Trustpilot data to gauge rating, sentiment, and frequency.</p></div>
+      <div class="chip-card"><span class="tag" style="background:var(--teal-tint);color:var(--teal)">TREND ANALYSIS</span><p>Compares against past reports to show exactly what changed since last time.</p></div>
     </div>
   </section>
 
@@ -326,7 +345,7 @@
     <p class="section-sub">One endpoint, one POST request. Built to be dropped into an agency site, a CRM, or an internal tool.</p>
     <div class="api-grid">
       <div class="api-copy">
-        <p>The endpoint accepts a target URL and an API key, and does the scraping, the speed lookup, and the AI analysis server-side — your app only has to handle the response.</p>
+        <p>The endpoint accepts a target URL and an API key, and does the scraping, tech detection, review fetching, and AI analysis server-side.</p>
         <p>Every call deducts a fixed token amount from the key's balance, returned in the response so usage can be tracked without a separate lookup.</p>
         <div class="meta">
           <span class="meta-item">POST /api/analyze</span>
@@ -335,7 +354,7 @@
         </div>
       </div>
       <div class="code-block"><pre style="margin:0;"><span class="cm">// Request</span>
-fetch(<span class="c2">"https://brand-dna-api.vercel.app/api/analyze"</span>, {
+fetch(<span class="c2">"/api/analyze"</span>, {
   method: <span class="c2">"POST"</span>,
   headers: { <span class="c2">"Content-Type"</span>: <span class="c2">"application/json"</span> },
   body: JSON.stringify({
@@ -347,8 +366,8 @@ fetch(<span class="c2">"https://brand-dna-api.vercel.app/api/analyze"</span>, {
 <span class="cm">// Response</span>
 {
   <span class="c1">"success"</span>: <span class="c3">true</span>,
-  <span class="c1">"brand_dna"</span>: { <span class="cm">...7 fields</span> },
-  <span class="c1">"tokens_remaining"</span>: <span class="c3">4250</span>
+  <span class="c1">"brand_dna"</span>: { <span class="cm">...10 fields</span> },
+  <span class="c1">"tokens_remaining"</span>: <span class="c3">48500</span>
 }</pre></div>
     </div>
   </section>
@@ -359,11 +378,13 @@ fetch(<span class="c2">"https://brand-dna-api.vercel.app/api/analyze"</span>, {
     <p class="section-sub"></p>
     <ul class="why-list">
       <li>Real PageSpeed scores pulled live — not an AI guess at "probably slow"</li>
+      <li>Detects actual ad trackers (Meta Pixel, Google Ads) running on the site</li>
       <li>Competitor names and counter-strategy, not just a list of USPs</li>
+      <li>Trustpilot reviews analyzed for real customer sentiment and frequency</li>
+      <li>Historical trend tracking — see if their ad activity or speed changed</li>
       <li>One API call returns everything — no chaining five separate tools</li>
       <li>Structured JSON out, so it drops straight into a report or dashboard</li>
       <li>Token usage returned with every response — no separate balance check</li>
-      <li>CORS-enabled, so any agency site can call it directly from the browser</li>
     </ul>
   </section>
 
@@ -373,14 +394,15 @@ fetch(<span class="c2">"https://brand-dna-api.vercel.app/api/analyze"</span>, {
   <div class="wrap footer-row">
     <div>
       <div class="footer-brand">Brand DNA Strategy Tool</div>
-      <div class="footer-sub">One link, one report — content, speed, and competitors in a single call.</div>
+      <div class="footer-sub">One link, one report — content, tech, reviews, and trends in a single call.</div>
     </div>
     <div class="footer-sig">Crafted by <strong>Tejas Jagtap</strong></div>
   </div>
 </footer>
 
 <script>
-  const API_BASE_URL = 'https://brand-dna-api.vercel.app';
+  // Using relative path so it works automatically on Vercel
+  const API_BASE_URL = ''; 
   const API_KEY = 'AGENCY-TRIAL-12345';
 
   async function analyzeBrand() {
@@ -455,8 +477,17 @@ fetch(<span class="c2">"https://brand-dna-api.vercel.app/api/analyze"</span>, {
         </div>`).join('');
       html += `<div class="card competitors"><h3><span class="tag">COMPETITOR BENCHMARKING</span></h3>${rows}</div>`;
     }
-    if (Array.isArray(b.missing_content_opportunities) && b.missing_content_opportunities.length) {
-      html += `<div class="card content"><h3><span class="tag">CONTENT GAPS</span></h3><ul>${b.missing_content_opportunities.map(i => `<li>${escapeHtml(i)}</li>`).join('')}</ul></div>`;
+    if (Array.isArray(b.content_gaps) && b.content_gaps.length) {
+      html += `<div class="card content"><h3><span class="tag">CONTENT GAPS</span></h3><ul>${b.content_gaps.map(i => `<li>${escapeHtml(i)}</li>`).join('')}</ul></div>`;
+    }
+    if (b.tech_stack_and_ads) {
+      html += `<div class="card tech"><h3><span class="tag">TECH STACK & AD TRACKING</span></h3><p>${escapeHtml(b.tech_stack_and_ads)}</p></div>`;
+    }
+    if (b.review_analysis) {
+      html += `<div class="card reviews"><h3><span class="tag">REVIEW ANALYSIS</span></h3><p>${escapeHtml(b.review_analysis)}</p></div>`;
+    }
+    if (b.trend_analysis) {
+      html += `<div class="card trends"><h3><span class="tag">TREND ANALYSIS (HISTORY)</span></h3><p>${escapeHtml(b.trend_analysis)}</p></div>`;
     }
     if (b.technical_audit) {
       html += `<div class="card technical"><h3><span class="tag">TECHNICAL AUDIT</span></h3><p>${escapeHtml(b.technical_audit)}</p></div>`;
