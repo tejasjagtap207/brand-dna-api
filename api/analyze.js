@@ -78,11 +78,13 @@ module.exports = async (req, res) => {
     } catch (e) { console.log("Speed API failed"); }
 
     // 7. Elite AI Prompt (With Trends, Reviews, Tech Stack)
-    const model = "gemini-3.1-Pro.";
-// or string concatenation leaving a trailing "."
-`${endpoint}/models/${model}:generateContent`
+const model = genAI.getGenerativeModel({
+  model: "gemini-3.6-flash",
+  generationConfig: { responseMimeType: "application/json" }
+});
 
-    const prompt = `You are an elite B2B Growth Hacker. 
+const prompt = `You are an elite B2B Growth Hacker. 
+... 
     Analyze this website text, review data, tech stack, and past history.
     Return JSON with these exact keys:
     - "executive_summary": (1 paragraph summary)
