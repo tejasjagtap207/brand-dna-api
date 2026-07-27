@@ -75,7 +75,7 @@ module.exports = async (req, res) => {
     } catch (e) { console.log("Speed API failed"); }
 
     // 7. Elite AI Prompt (Purana + Naya Data)
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest", generationConfig: { responseMimeType: "application/json" } });
+    const model = genAI.getGenerativeModel({ model: "gemini-3.1-pro", generationConfig: { responseMimeType: "application/json" } });
 
     const prompt = `You are an elite B2B Growth Hacker. Analyze this website text, review data, tech stack, and past history.
     Return a JSON object with these exact keys:
