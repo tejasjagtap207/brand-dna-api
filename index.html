@@ -110,10 +110,9 @@
   .analyze-btn:focus-visible, .input-row input:focus-visible{ outline:2px solid var(--brand); outline-offset:2px; }
 
   .token-line{
-    margin-top:14px; display:none; align-items:center; gap:8px;
+    margin-top:14px; display:flex; align-items:center; gap:8px;
     font-family:'JetBrains Mono',monospace; font-size:0.8rem; color:var(--muted);
   }
-  .token-line.active{ display:flex; }
   .token-count{ color:var(--teal); font-weight:600; }
 
   .loading{
@@ -467,7 +466,6 @@ fetch(<span class="c2">"https://brand-dna-api.vercel.app/api/analyze"</span>, {
     resultDiv.classList.add('active');
 
     if (typeof data.tokens_remaining !== 'undefined') {
-      document.getElementById('tokenLine').classList.add('active');
       document.getElementById('tokenCount').textContent = data.tokens_remaining.toLocaleString();
     }
 
