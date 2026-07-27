@@ -74,10 +74,14 @@ module.exports = async (req, res) => {
       speedData = `Mobile Performance: ${perf}/100. Mobile SEO: ${seo}/100.`;
     } catch (e) { console.log("Speed API failed"); }
 
-    // 7. Elite AI Prompt (Purana + Naya Data)
-    const model = genAI.getGenerativeModel({ model: "gemini-3.1-pro", generationConfig: { responseMimeType: "application/json" } });
+    // 7. Elite AI Prompt (With Trends, Reviews, Tech Stack)
+const model = genAI.getGenerativeModel({
+  model: "gemini-3.6-flash",
+  generationConfig: { responseMimeType: "application/json" }
+});
 
-    const prompt = `You are an elite B2B Growth Hacker. Analyze this website text, review data, tech stack, and past history.
+const prompt = `You are an elite B2B Growth Hacker. 
+... Analyze this website text, review data, tech stack, and past history.
     Return a JSON object with these exact keys:
     - "executive_summary": (1 paragraph summary of the brand's current positioning)
     - "tone_of_voice": (string describing their brand voice)
