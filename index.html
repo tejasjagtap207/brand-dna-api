@@ -1,76 +1,488 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Brand DNA Strategy Tool</title>
-    <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f7f6; padding: 20px; text-align: center; }
-        .container { max-width: 800px; margin: 0 auto; background: white; padding: 40px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        input { width: 80%; padding: 15px; font-size: 16px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 5px; }
-        button { background: #007bff; color: white; padding: 15px 30px; font-size: 16px; border: none; border-radius: 5px; cursor: pointer; }
-        button:hover { background: #0056b3; }
-        #result { text-align: left; margin-top: 30px; padding: 20px; background: #e9ecef; border-radius: 5px; white-space: pre-wrap; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brand DNA Strategy Tool — API by Tejas Jagtap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0b1130;
+    --muted:#5b6280;
+    --bg:#f5f6fb;
+    --surface:#ffffff;
+    --line:#e3e6f3;
+    --brand:#3730e0;
+    --brand-deep:#221b7a;
+    --brand-tint:#eef0ff;
+    --teal:#0ea5a0;
+    --teal-tint:#e6fbf9;
+    --rose:#e11d48;
+    --rose-tint:#fff1f2;
+    --amber:#b45309;
+    --amber-tint:#fff7e6;
+    --green:#15803d;
+    --green-tint:#ecfdf3;
+    --slate:#475569;
+    --slate-tint:#f1f2f6;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{ color:inherit; text-decoration:none; }
+  ::selection{ background:var(--brand); color:#fff; }
+
+  .wrap{ max-width:1080px; margin:0 auto; padding:0 6vw; }
+
+  header{
+    position:sticky; top:0; z-index:20;
+    background:rgba(245,246,251,0.85);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 6vw;
+    max-width:1080px; margin:0 auto;
+  }
+  .logo{ display:flex; align-items:center; gap:10px; }
+  .logo-mark{
+    width:30px; height:30px; border-radius:8px;
+    background:linear-gradient(135deg,var(--brand),#6a5cff);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Manrope',sans-serif; font-weight:800; color:#fff; font-size:0.8rem;
+  }
+  .logo-text{ font-family:'Manrope',sans-serif; font-weight:800; font-size:1.02rem; letter-spacing:-0.01em; }
+  .nav-links{ display:flex; align-items:center; gap:26px; }
+  .nav-links a{ font-size:0.86rem; color:var(--muted); font-weight:500; }
+  .nav-links a:hover{ color:var(--ink); }
+  .author-chip{
+    font-size:0.78rem; color:var(--muted);
+    border:1px solid var(--line); background:var(--surface);
+    padding:6px 12px; border-radius:99px; white-space:nowrap;
+  }
+  .author-chip strong{ color:var(--ink); font-weight:600; }
+
+  /* HERO */
+  .hero{ padding:64px 0 20px; }
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.72rem; letter-spacing:0.12em; text-transform:uppercase;
+    color:var(--brand); font-weight:600; margin-bottom:16px;
+  }
+  h1{
+    font-family:'Manrope',sans-serif; font-weight:800;
+    font-size:clamp(2rem,4.2vw,2.9rem); line-height:1.12; letter-spacing:-0.02em;
+    margin:0 0 16px; max-width:680px;
+  }
+  .hero p.lead{
+    color:var(--muted); font-size:1.05rem; max-width:600px; line-height:1.65; margin:0 0 32px;
+  }
+
+  .tool-card{
+    background:var(--surface); border:1px solid var(--line); border-radius:16px;
+    padding:20px; box-shadow:0 12px 30px -18px rgba(11,17,48,0.18);
+  }
+  .input-row{ display:flex; gap:10px; flex-wrap:wrap; }
+  .input-row input{
+    flex:1; min-width:220px;
+    border:1px solid var(--line); border-radius:10px;
+    padding:14px 16px; font-family:'JetBrains Mono',monospace; font-size:0.92rem;
+    color:var(--ink); outline:none; background:#fbfbfe;
+  }
+  .input-row input:focus{ border-color:var(--brand); }
+  .analyze-btn{
+    border:none; cursor:pointer; padding:14px 24px; border-radius:10px;
+    font-family:'Inter',sans-serif; font-weight:600; font-size:0.94rem; color:#fff;
+    background:var(--brand); transition:background .15s ease, transform .15s ease;
+    white-space:nowrap;
+  }
+  .analyze-btn:hover{ background:var(--brand-deep); transform:translateY(-1px); }
+  .analyze-btn:disabled{ opacity:0.55; cursor:not-allowed; transform:none; }
+  .analyze-btn:focus-visible, .input-row input:focus-visible{ outline:2px solid var(--brand); outline-offset:2px; }
+
+  .token-line{
+    margin-top:14px; display:none; align-items:center; gap:8px;
+    font-family:'JetBrains Mono',monospace; font-size:0.8rem; color:var(--muted);
+  }
+  .token-line.active{ display:flex; }
+  .token-count{ color:var(--teal); font-weight:600; }
+
+  .loading{
+    display:none; align-items:center; gap:12px; margin-top:16px;
+    font-family:'JetBrains Mono',monospace; font-size:0.85rem; color:var(--muted);
+  }
+  .loading.active{ display:flex; }
+  .spinner{
+    width:16px; height:16px; border-radius:50%;
+    border:2px solid var(--line); border-top-color:var(--brand);
+    animation:spin .7s linear infinite;
+  }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce){ .spinner{ animation:none; } }
+
+  .error-box{
+    display:none; margin-top:16px; background:var(--rose-tint);
+    border:1px solid #f8b4c0; border-radius:12px; padding:16px 18px;
+    font-size:0.9rem; line-height:1.55;
+  }
+  .error-box.active{ display:block; }
+  .error-box .title{ color:var(--rose); font-weight:700; font-family:'Manrope',sans-serif; margin-bottom:3px; }
+  .error-box .detail{ color:var(--muted); font-family:'JetBrains Mono',monospace; font-size:0.78rem; margin-top:8px; word-break:break-word; }
+
+  /* RESULTS */
+  #result{ display:none; margin-top:10px; }
+  #result.active{ display:block; }
+  .card{
+    background:var(--surface); border:1px solid var(--line);
+    border-left:4px solid var(--slate); border-radius:12px;
+    padding:20px 22px; margin-bottom:14px;
+  }
+  .card h3{
+    font-family:'Manrope',sans-serif; font-weight:700; font-size:0.95rem; margin:0 0 10px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .tag{
+    font-family:'JetBrains Mono',monospace; font-size:0.68rem; font-weight:600;
+    padding:3px 8px; border-radius:6px; letter-spacing:0.02em;
+  }
+  .card p{ margin:0; line-height:1.65; font-size:0.93rem; color:var(--ink); }
+  .card ul{ margin:0; padding-left:18px; line-height:1.75; font-size:0.93rem; color:var(--ink); }
+  .card.summary{ border-left-color:var(--brand); }
+  .card.tone{ border-left-color:var(--brand); }
+  .card.tone .tag{ background:var(--brand-tint); color:var(--brand); }
+  .card.usp{ border-left-color:var(--teal); }
+  .card.usp .tag{ background:var(--teal-tint); color:var(--teal); }
+  .card.pain{ border-left-color:var(--rose); }
+  .card.pain .tag{ background:var(--rose-tint); color:var(--rose); }
+  .card.competitors{ border-left-color:var(--amber); }
+  .card.competitors .tag{ background:var(--amber-tint); color:var(--amber); }
+  .card.content{ border-left-color:var(--green); }
+  .card.content .tag{ background:var(--green-tint); color:var(--green); }
+  .card.technical{ border-left-color:var(--slate); }
+  .card.technical .tag{ background:var(--slate-tint); color:var(--slate); }
+
+  .competitor-row{ padding:12px 0; border-top:1px solid var(--line); }
+  .competitor-row:first-of-type{ border-top:none; padding-top:0; }
+  .competitor-row .comp-name{ font-family:'Manrope',sans-serif; font-weight:700; font-size:0.9rem; color:var(--amber); }
+  .competitor-row .comp-line{ font-size:0.87rem; color:var(--muted); line-height:1.5; }
+  .competitor-row .comp-line strong{ color:var(--ink); font-weight:600; }
+
+  /* SECTIONS */
+  section.block{ padding:56px 0; border-top:1px solid var(--line); }
+  .section-tag{
+    font-family:'JetBrains Mono',monospace; font-size:0.7rem; letter-spacing:0.12em;
+    text-transform:uppercase; color:var(--brand); font-weight:600; margin-bottom:10px;
+  }
+  .section-head{ font-family:'Manrope',sans-serif; font-weight:800; font-size:1.5rem; margin:0 0 8px; letter-spacing:-0.01em; }
+  .section-sub{ color:var(--muted); max-width:600px; line-height:1.6; margin:0 0 32px; font-size:0.95rem; }
+
+  /* HOW IT WORKS */
+  .steps{ display:grid; grid-template-columns:repeat(4,1fr); gap:18px; }
+  .step{ background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:20px; }
+  .step-num{
+    font-family:'JetBrains Mono',monospace; font-weight:600; font-size:0.78rem; color:var(--brand);
+    display:inline-block; margin-bottom:12px;
+  }
+  .step h4{ font-family:'Manrope',sans-serif; font-size:0.95rem; margin:0 0 6px; }
+  .step p{ color:var(--muted); font-size:0.85rem; line-height:1.55; margin:0; }
+
+  /* CHIPS GRID */
+  .chip-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+  .chip-card{ background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:18px; }
+  .chip-card .tag{ display:inline-block; margin-bottom:10px; }
+  .chip-card p{ color:var(--muted); font-size:0.85rem; line-height:1.55; margin:0; }
+
+  /* API / CODE */
+  .api-grid{ display:grid; grid-template-columns:1fr 1fr; gap:24px; align-items:start; }
+  .api-copy p{ color:var(--muted); font-size:0.93rem; line-height:1.7; margin:0 0 14px; }
+  .api-copy .meta{ display:flex; gap:10px; flex-wrap:wrap; margin-top:18px; }
+  .meta-item{
+    font-family:'JetBrains Mono',monospace; font-size:0.76rem; color:var(--brand-deep);
+    background:var(--brand-tint); padding:6px 10px; border-radius:6px;
+  }
+  .code-block{
+    background:#0b1130; border-radius:12px; padding:20px;
+    font-family:'JetBrains Mono',monospace; font-size:0.78rem; line-height:1.7;
+    color:#d7d9f5; overflow-x:auto;
+  }
+  .code-block .c1{ color:#8b93ff; }
+  .code-block .c2{ color:#4fd6c9; }
+  .code-block .c3{ color:#f2c078; }
+  .code-block .cm{ color:#6b7099; }
+
+  /* WHY */
+  .why-list{ list-style:none; padding:0; margin:0; display:grid; grid-template-columns:1fr 1fr; gap:12px 24px; }
+  .why-list li{
+    display:flex; gap:10px; align-items:flex-start; font-size:0.92rem; color:var(--ink); line-height:1.5;
+  }
+  .why-list li::before{
+    content:"✓"; color:var(--teal); font-weight:700; flex-shrink:0;
+    background:var(--teal-tint); width:20px; height:20px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; font-size:0.7rem; margin-top:1px;
+  }
+
+  footer{
+    border-top:1px solid var(--line); padding:32px 0 40px;
+  }
+  .footer-row{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px; }
+  .footer-brand{ font-family:'Manrope',sans-serif; font-weight:700; font-size:0.95rem; }
+  .footer-sub{ color:var(--muted); font-size:0.82rem; margin-top:4px; }
+  .footer-sig{ font-family:'JetBrains Mono',monospace; font-size:0.8rem; color:var(--muted); }
+  .footer-sig strong{ color:var(--ink); }
+
+  @media (max-width:820px){
+    .nav-links{ display:none; }
+    .steps{ grid-template-columns:1fr 1fr; }
+    .chip-grid{ grid-template-columns:1fr 1fr; }
+    .api-grid{ grid-template-columns:1fr; }
+    .why-list{ grid-template-columns:1fr; }
+  }
+  @media (max-width:520px){
+    .steps{ grid-template-columns:1fr; }
+    .chip-grid{ grid-template-columns:1fr; }
+    .input-row{ flex-direction:column; }
+  }
+</style>
 </head>
 <body>
-<div class="container">
-    <h1>🚀 Free Brand DNA Strategy Tool</h1>
-    <p>Enter your prospect's website URL below to instantly extract their Brand Voice, USPs, and Missing Opportunities.</p>
-    
-    <input type="text" id="websiteUrl" placeholder="https://www.example.com">
-    <button onclick="analyzeBrand()">Analyze Brand Strategy</button>
-    <div id="loading" style="display:none; font-weight:bold; color:blue;">Analyzing website... Please wait 5 seconds.</div>
+
+<header>
+  <div class="nav">
+    <div class="logo">
+      <div class="logo-mark">BD</div>
+      <div class="logo-text">Brand DNA</div>
+    </div>
+    <div class="nav-links">
+      <a href="#how">How it works</a>
+      <a href="#inside">What you get</a>
+      <a href="#api">API</a>
+      <a href="#why">Why this</a>
+    </div>
+    <div class="author-chip">Built by <strong>Tejas Jagtap</strong></div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="hero">
+    <div class="eyebrow">Live brand &amp; competitor analysis</div>
+    <h1>One URL in. A full brand strategy brief out.</h1>
+    <p class="lead">Paste any prospect's website. The API scrapes their live content, pulls real Google PageSpeed data, and runs it through AI to return tone of voice, USPs, pain points, competitor benchmarking, content gaps, and a technical audit — as structured JSON.</p>
+
+    <div class="tool-card">
+      <div class="input-row">
+        <input type="text" id="websiteUrl" placeholder="https://www.example.com" autocomplete="off" spellcheck="false">
+        <button class="analyze-btn" id="analyzeBtn" onclick="analyzeBrand()">Analyze Brand Strategy</button>
+      </div>
+      <div class="token-line" id="tokenLine"><span>●</span> <span class="token-count" id="tokenCount">—</span> tokens remaining on this key</div>
+      <div class="loading" id="loading"><div class="spinner"></div><span id="loadingText">Scraping site, pulling speed data, running analysis…</span></div>
+      <div class="error-box" id="errorBox">
+        <div class="title">Analysis failed</div>
+        <div id="errorMsg">Something went wrong.</div>
+        <div class="detail" id="errorDetail"></div>
+      </div>
+    </div>
+
     <div id="result"></div>
-</div>
+  </section>
+
+  <section class="block" id="how">
+    <div class="section-tag">Process</div>
+    <h2 class="section-head">How it works</h2>
+    <p class="section-sub">Four steps happen inside a single API call — no manual research, no separate tools to stitch together.</p>
+    <div class="steps">
+      <div class="step"><span class="step-num">01</span><h4>Fetch the page</h4><p>The live website is read and cleaned into plain text — scripts, nav, and footer stripped out.</p></div>
+      <div class="step"><span class="step-num">02</span><h4>Pull real speed data</h4><p>Google PageSpeed Insights returns actual mobile performance and SEO scores — not estimates.</p></div>
+      <div class="step"><span class="step-num">03</span><h4>Run the analysis</h4><p>An AI model reads the content and speed data together to build the strategic brief.</p></div>
+      <div class="step"><span class="step-num">04</span><h4>Return structured JSON</h4><p>One response, seven fields, ready to render in a report, a CRM, or a client dashboard.</p></div>
+    </div>
+  </section>
+
+  <section class="block" id="inside">
+    <div class="section-tag">Output</div>
+    <h2 class="section-head">What's inside every report</h2>
+    <p class="section-sub">Each report returns the same seven fields, every time — predictable enough to build a template around.</p>
+    <div class="chip-grid">
+      <div class="chip-card"><span class="tag" style="background:var(--brand-tint);color:var(--brand)">EXECUTIVE SUMMARY</span><p>One paragraph on how the brand currently positions itself.</p></div>
+      <div class="chip-card"><span class="tag" style="background:var(--brand-tint);color:var(--brand)">TONE OF VOICE</span><p>How the brand actually sounds, described in plain language.</p></div>
+      <div class="chip-card"><span class="tag" style="background:var(--teal-tint);color:var(--teal)">USPs</span><p>Three things the brand does better than its category.</p></div>
+      <div class="chip-card"><span class="tag" style="background:var(--rose-tint);color:var(--rose)">PAIN POINTS</span><p>Three problems their audience is likely facing.</p></div>
+      <div class="chip-card"><span class="tag" style="background:var(--amber-tint);color:var(--amber)">COMPETITOR BENCHMARKING</span><p>Named competitors, their edge, and how to counter it.</p></div>
+      <div class="chip-card"><span class="tag" style="background:var(--green-tint);color:var(--green)">CONTENT GAPS</span><p>SEO and content opportunities the brand is missing.</p></div>
+    </div>
+  </section>
+
+  <section class="block" id="api">
+    <div class="section-tag">For developers</div>
+    <h2 class="section-head">Call it directly from your own stack</h2>
+    <p class="section-sub">One endpoint, one POST request. Built to be dropped into an agency site, a CRM, or an internal tool.</p>
+    <div class="api-grid">
+      <div class="api-copy">
+        <p>The endpoint accepts a target URL and an API key, and does the scraping, the speed lookup, and the AI analysis server-side — your app only has to handle the response.</p>
+        <p>Every call deducts a fixed token amount from the key's balance, returned in the response so usage can be tracked without a separate lookup.</p>
+        <div class="meta">
+          <span class="meta-item">POST /api/analyze</span>
+          <span class="meta-item">Content-Type: application/json</span>
+          <span class="meta-item">CORS enabled</span>
+        </div>
+      </div>
+      <div class="code-block"><pre style="margin:0;"><span class="cm">// Request</span>
+fetch(<span class="c2">"https://brand-dna-api.vercel.app/api/analyze"</span>, {
+  method: <span class="c2">"POST"</span>,
+  headers: { <span class="c2">"Content-Type"</span>: <span class="c2">"application/json"</span> },
+  body: JSON.stringify({
+    url: <span class="c2">"https://prospect-site.com"</span>,
+    api_key: <span class="c2">"YOUR_API_KEY"</span>
+  })
+});
+
+<span class="cm">// Response</span>
+{
+  <span class="c1">"success"</span>: <span class="c3">true</span>,
+  <span class="c1">"brand_dna"</span>: { <span class="cm">...7 fields</span> },
+  <span class="c1">"tokens_remaining"</span>: <span class="c3">4250</span>
+}</pre></div>
+    </div>
+  </section>
+
+  <section class="block" id="why">
+    <div class="section-tag">Why this instead</div>
+    <h2 class="section-head">Why teams use this over guesswork</h2>
+    <p class="section-sub"></p>
+    <ul class="why-list">
+      <li>Real PageSpeed scores pulled live — not an AI guess at "probably slow"</li>
+      <li>Competitor names and counter-strategy, not just a list of USPs</li>
+      <li>One API call returns everything — no chaining five separate tools</li>
+      <li>Structured JSON out, so it drops straight into a report or dashboard</li>
+      <li>Token usage returned with every response — no separate balance check</li>
+      <li>CORS-enabled, so any agency site can call it directly from the browser</li>
+    </ul>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap footer-row">
+    <div>
+      <div class="footer-brand">Brand DNA Strategy Tool</div>
+      <div class="footer-sub">One link, one report — content, speed, and competitors in a single call.</div>
+    </div>
+    <div class="footer-sig">Crafted by <strong>Tejas Jagtap</strong></div>
+  </div>
+</footer>
+
 <script>
-    // Production Vercel URL (hash wale preview URLs use mat karo, ye hamesha same rehta hai)
-    const API_BASE_URL = 'https://brand-dna-api.vercel.app';
+  const API_BASE_URL = 'https://brand-dna-api.vercel.app';
+  const API_KEY = 'AGENCY-TRIAL-12345';
 
-    async function analyzeBrand() {
-        const url = document.getElementById('websiteUrl').value;
-        const resultDiv = document.getElementById('result');
-        const loadingDiv = document.getElementById('loading');
-        
-        if(!url) { alert("Please enter a URL"); return; }
-        resultDiv.innerHTML = "";
-        loadingDiv.style.display = "block";
-        try {
-            const response = await fetch(`${API_BASE_URL}/api/analyze`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ url: url, api_key: 'AGENCY-TRIAL-12345' })
-            });
+  async function analyzeBrand() {
+    const url = document.getElementById('websiteUrl').value.trim();
+    const btn = document.getElementById('analyzeBtn');
+    const loading = document.getElementById('loading');
+    const resultDiv = document.getElementById('result');
+    const errorBox = document.getElementById('errorBox');
+    const errorMsg = document.getElementById('errorMsg');
+    const errorDetail = document.getElementById('errorDetail');
 
-            const data = await response.json();
-            loadingDiv.style.display = "none";
+    if (!url) { alert('Please enter a website URL'); return; }
 
-            if (!response.ok || data.error) {
-                resultDiv.innerHTML = `<span style="color:red;">Error: ${data.error || 'Unknown error (status ' + response.status + ')'}</span>`;
-                return;
-            }
+    resultDiv.classList.remove('active');
+    resultDiv.innerHTML = '';
+    errorBox.classList.remove('active');
+    loading.classList.add('active');
+    btn.disabled = true;
 
-            const brand = data.brand_dna;
-            resultDiv.innerHTML = `
-                <h3>Tone of Voice:</h3> <p>${brand.tone_of_voice}</p>
-                
-                <h3>Unique Selling Propositions (USPs):</h3>
-                <ul>${brand.unique_selling_propositions.map(item => `<li>${item}</li>`).join('')}</ul>
-                
-                <h3>Audience Pain Points:</h3>
-                <ul>${brand.audience_pain_points.map(item => `<li>${item}</li>`).join('')}</ul>
-                
-                <h3>Missing Content Opportunities:</h3>
-                <ul>${brand.missing_content_opportunities.map(item => `<li>${item}</li>`).join('')}</ul>
-                
-                <hr><p style="text-align:right; color:gray;">Tokens Remaining: ${data.tokens_remaining}</p>
-            `;
-        } catch (error) {
-            loadingDiv.style.display = "none";
-            resultDiv.innerHTML = `<span style="color:red;">Failed to connect to API. Check your Vercel link.<br>Details: ${error.message}</span>`;
-            console.error("Fetch error:", error);
-        }
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/analyze`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: url, api_key: API_KEY })
+      });
+
+      const data = await response.json();
+      loading.classList.remove('active');
+      btn.disabled = false;
+
+      if (!response.ok || data.error) {
+        errorMsg.textContent = data.error || `Unknown error (status ${response.status})`;
+        errorDetail.textContent = data.details ? data.details : '';
+        errorBox.classList.add('active');
+        return;
+      }
+
+      renderResult(data);
+
+    } catch (err) {
+      loading.classList.remove('active');
+      btn.disabled = false;
+      errorMsg.textContent = 'Could not reach the API.';
+      errorDetail.textContent = err.message;
+      errorBox.classList.add('active');
     }
+  }
+
+  function renderResult(data) {
+    const b = data.brand_dna || {};
+    const resultDiv = document.getElementById('result');
+    let html = '';
+
+    if (b.executive_summary) {
+      html += `<div class="card summary"><h3><span class="tag" style="background:var(--brand-tint);color:var(--brand)">SUMMARY</span></h3><p>${escapeHtml(b.executive_summary)}</p></div>`;
+    }
+    if (b.tone_of_voice) {
+      html += `<div class="card tone"><h3><span class="tag">TONE OF VOICE</span></h3><p>${escapeHtml(b.tone_of_voice)}</p></div>`;
+    }
+    if (Array.isArray(b.unique_selling_propositions) && b.unique_selling_propositions.length) {
+      html += `<div class="card usp"><h3><span class="tag">USPs</span></h3><ul>${b.unique_selling_propositions.map(i => `<li>${escapeHtml(i)}</li>`).join('')}</ul></div>`;
+    }
+    if (Array.isArray(b.audience_pain_points) && b.audience_pain_points.length) {
+      html += `<div class="card pain"><h3><span class="tag">PAIN POINTS</span></h3><ul>${b.audience_pain_points.map(i => `<li>${escapeHtml(i)}</li>`).join('')}</ul></div>`;
+    }
+    if (Array.isArray(b.competitor_benchmarking) && b.competitor_benchmarking.length) {
+      const rows = b.competitor_benchmarking.map(c => `
+        <div class="competitor-row">
+          <div class="comp-name">${escapeHtml(c.competitor_name || 'Competitor')}</div>
+          <div class="comp-line"><strong>Their advantage:</strong> ${escapeHtml(c.their_advantage || '—')}</div>
+          <div class="comp-line"><strong>How to beat them:</strong> ${escapeHtml(c.how_to_beat_them || '—')}</div>
+        </div>`).join('');
+      html += `<div class="card competitors"><h3><span class="tag">COMPETITOR BENCHMARKING</span></h3>${rows}</div>`;
+    }
+    if (Array.isArray(b.missing_content_opportunities) && b.missing_content_opportunities.length) {
+      html += `<div class="card content"><h3><span class="tag">CONTENT GAPS</span></h3><ul>${b.missing_content_opportunities.map(i => `<li>${escapeHtml(i)}</li>`).join('')}</ul></div>`;
+    }
+    if (b.technical_audit) {
+      html += `<div class="card technical"><h3><span class="tag">TECHNICAL AUDIT</span></h3><p>${escapeHtml(b.technical_audit)}</p></div>`;
+    }
+
+    resultDiv.innerHTML = html;
+    resultDiv.classList.add('active');
+
+    if (typeof data.tokens_remaining !== 'undefined') {
+      document.getElementById('tokenLine').classList.add('active');
+      document.getElementById('tokenCount').textContent = data.tokens_remaining.toLocaleString();
+    }
+
+    resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = String(str);
+    return div.innerHTML;
+  }
+
+  document.getElementById('websiteUrl').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') analyzeBrand();
+  });
 </script>
 </body>
 </html>
