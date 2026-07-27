@@ -5,11 +5,9 @@ const axios = require("axios");
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
 
-// Helper function to extract domain name
 function getDomain(urlStr) {
-  try {
-    return new URL(urlStr).hostname.replace('www.', '');
-  } catch { return urlStr; }
+  try { return new URL(urlStr).hostname.replace('www.', ''); } 
+  catch { return urlStr; }
 }
 
 module.exports = async (req, res) => {
@@ -29,12 +27,12 @@ module.exports = async (req, res) => {
     if (dbError || !user) return res.status(401).json({ error: "Invalid API Key." });
     if (user.tokens_remaining <= 0) return res.status(403).json({ error: "Trial limit reached." });
 
-    // 2. Fetch Website Text
+    // 2. Fetch Website Text (Jina AI)
     const jinaUrl = "https://r.jina.ai/" + url;
     const jinaResponse = await axios.get(jinaUrl, { timeout: 15000, headers: { 'Accept': 'text/plain' } });
     let websiteText = jinaResponse.data.replace(/\s+/g, " ").trim().substring(0, 5000);
 
-    // 3. Detect Tools & Tracking (Raw HTML check)
+    // 3. Detect Tools & Tracking (Raw HTML check for Ads/Software)
     let techStack = "Could not detect tools.";
     try {
       const rawHtml = await axios.get(url, { timeout: 10000 });
@@ -43,7 +41,6 @@ module.exports = async (req, res) => {
       if (htmlText.includes('gtag') || htmlText.includes('google-analytics')) detected.push("Google Analytics");
       if (htmlText.includes('fbq') || htmlText.includes('facebook.net')) detected.push("Meta Pixel (Facebook Ads)");
       if (htmlText.includes('hubspot')) detected.push("Hubspot CRM");
-      if (htmlText.includes('hs-scripts')) detected.push("Hubspot Tracking");
       if (htmlText.includes('clarity.ms')) detected.push("Microsoft Clarity");
       if (htmlText.includes('hotjar')) detected.push("Hotjar");
       if (htmlText.includes('googleads.g.doubleclick.net')) detected.push("Google Ads Tracking");
@@ -77,24 +74,21 @@ module.exports = async (req, res) => {
       speedData = `Mobile Performance: ${perf}/100. Mobile SEO: ${seo}/100.`;
     } catch (e) { console.log("Speed API failed"); }
 
-    // 7. Elite AI Prompt (With Trends, Reviews, Tech Stack)
-const model = genAI.getGenerativeModel({
-  model: "gemini-3.6-flash",
-  generationConfig: { responseMimeType: "application/json" }
-});
+    // 7. Elite AI Prompt (Purana + Naya Data)
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest", generationConfig: { responseMimeType: "application/json" } });
 
-const prompt = `You are an elite B2B Growth Hacker. 
-... 
-    Analyze this website text, review data, tech stack, and past history.
-    Return JSON with these exact keys:
-    - "executive_summary": (1 paragraph summary)
-    - "tech_stack_analysis": (Analyze this detected tech: ${techStack}. Are they running ads? Do they have tracking?)
+    const prompt = `You are an elite B2B Growth Hacker. Analyze this website text, review data, tech stack, and past history.
+    Return a JSON object with these exact keys:
+    - "executive_summary": (1 paragraph summary of the brand's current positioning)
+    - "tone_of_voice": (string describing their brand voice)
+    - "unique_selling_propositions": (array of 3 strings)
+    - "audience_pain_points": (array of 3 strings)
+    - "competitor_benchmarking": (array of 3 objects, each with "competitor_name", "their_advantage", and "how_to_beat_them")
+    - "content_gaps": (array of 3 strings for SEO/content)
+    - "tech_stack_and_ads": (Analyze this detected tech: ${techStack}. Are they running ads? Do they have tracking?)
     - "review_analysis": (Analyze this review data: ${reviewText}. What is their rating, sentiment, and how often do they get reviews?)
     - "trend_analysis": (Compare current data to past history: ${historyText}. If history exists, highlight what changed. If no history, say 'First baseline report established.')
-    - "conversion_bottlenecks": (array of 3 strings)
-    - "missing_lead_magnets": (array of 3 strings)
-    - "30_day_revenue_action_plan": (array of 3 concrete steps)
-    - "technical_audit": (string analyzing speed data: ${speedData})
+    - "technical_audit": (string analyzing this speed data: ${speedData})
     
     Website Text: ${websiteText}`;
 
