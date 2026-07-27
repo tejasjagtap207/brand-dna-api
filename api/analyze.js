@@ -78,7 +78,7 @@ module.exports = async (req, res) => {
     } catch (e) { console.log("Speed API failed"); }
 
     // 7. Elite AI Prompt (With Trends, Reviews, Tech Stack)
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash", generationConfig: { responseMimeType: "application/json" } });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-lasest", generationConfig: { responseMimeType: "application/json" } });
 
     const prompt = `You are an elite B2B Growth Hacker. 
     Analyze this website text, review data, tech stack, and past history.
