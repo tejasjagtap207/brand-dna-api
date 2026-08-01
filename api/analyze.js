@@ -76,7 +76,7 @@ module.exports = async (req, res) => {
 
     // 7. Elite AI Prompt (With Trends, Reviews, Tech Stack)
 const model = genAI.getGenerativeModel({
-  model: "gemini-2.6-flash",
+  model: "gemini-3.6-flash",
   generationConfig: { responseMimeType: "application/json" }
 });
 
